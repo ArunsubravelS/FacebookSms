@@ -3,8 +3,15 @@ package com.ass.sms.service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import com.ass.sms.dto.AppResponse;
@@ -17,6 +24,9 @@ public class ChannelServiceImpl implements ChannelService {
 
 	@Autowired
 	private ChannalRepository cr;
+	
+	@Autowired
+	JdbcTemplate jdbcTemplate; 
 
 	private AppResponse appResponseDto;
 
@@ -29,7 +39,7 @@ public class ChannelServiceImpl implements ChannelService {
 			sd.setName(dto.getName());
 			sd.setContactNumber(dto.getContactNumber());
 			sd.setCreatedDate(new Date());
-			sd.setSmsStatus("SuCCeSs");
+			sd.setSmsStatus("SUCCESS");
 			sd.setSmsContact(dto.getSmsContent());
 
 			SmsDetails savedObject = cr.save(sd);
@@ -52,11 +62,18 @@ public class ChannelServiceImpl implements ChannelService {
 	@Override
 	public List getSmsDetails(long altKey) {
 		// TODO Auto-generated method stub
+		
 
 		return null;
 	}
 
 	public List SaveAll(List<SmsDto> smsList) {
+		
+		List list=new ArrayList<SmsDetails>();
+		list.add(smsList);
+		
+		
+		
 		return null;
 	}
 
@@ -91,6 +108,66 @@ public class ChannelServiceImpl implements ChannelService {
 		smsDeatails.setSmsStatus("SUCCESS");
 
 		return smsDeatails;
+	}
+
+	@Override
+	public SmsDetails processChannalById(long id) {
+		// TODO Auto-generated method stub
+  
+		Optional<SmsDetails> optional = cr.findById(id);
+		SmsDetails smsDetails = optional.get();
+		return smsDetails;
+	}
+
+	@Override
+	public List<SmsDetails> processChannalBySmsStatus(String smsStatus) {
+		// TODO Auto-generated method stub
+		
+		List<SmsDetails> list=cr.findBySmsStatus(smsStatus);
+		return list;
+		
+	}
+
+	@Override
+	public SmsDetails processChannalByNameAndContactNumber(String name, long ContactNumber) {
+		// TODO Auto-generated method stub
+		SmsDetails smsDetails=cr.findByNameAndContactNumber(name, ContactNumber);
+		return smsDetails;
+	}
+	
+	@Override
+	public Page<SmsDetails> getAllChannalName(){
+		Sort sort=Sort.by("contactNumber").descending();
+		//PageRequest pageRequest=PageRequest.of(0, 3);
+		PageRequest pageRequest=PageRequest.of(0, 3,sort);
+		Page<SmsDetails> findAll=cr.findAll(pageRequest);
+		//List<SmsDetails> collect=findAll.get().collect(Collector<T, A, R>)
+		return cr.findAll(pageRequest);
+		
+	}
+
+	@Override
+	public Integer processUpdateContactNumberByAltKey(long contactNumber,long altKey) {
+		// TODO Auto-generated method stub
+		//SmsDetails smsDetails=cr.processUpdateContactNumberByAltKey(contactNumber, altKey);
+		return cr.processUpdateContactNumberByAltKey(contactNumber, altKey);
+	}
+
+	@Override
+	public List<SmsDetails> getChannels() {
+		// TODO Auto-generated method stub	
+		StringBuilder builder=new StringBuilder();
+		builder.append("select * from sms_details");
+		List<Map<String,Object>> resultList=
+				jdbcTemplate.queryForList(builder.toString());
+		List<SmsDetails> collect = resultList.stream().map(each	->{
+			SmsDetails smsDetails=new SmsDetails();
+			smsDetails.setAltKey(Long.parseLong(each.get("alt_key").toString()));
+			smsDetails.setContactNumber(Long.parseLong(each.get("contact_number").toString()));
+			smsDetails.setName(each.get("name").toString());
+			return smsDetails;
+		}).collect(Collectors.toList());
+		return collect;
 	}
 
 }

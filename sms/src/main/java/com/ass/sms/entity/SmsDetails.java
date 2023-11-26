@@ -17,29 +17,29 @@ public class SmsDetails {
 	@Id
 	@GenericGenerator(name="auto",strategy = "increment")
 	@GeneratedValue(generator ="auto")
-	@Column(name="altKey")
-	private int altKey;
+	@Column(name="alt_key")
+	private long altKey;
 	
 	@Column(name="name")
 	private String name;
 
-	@Column(name="contactNumber")
+	@Column(name="contact_number")
 	private long contactNumber;
 
-	@Column(name="smsContact")
+	@Column(name="sms_contact")
 	private String smsContact;
 
-	@Column(name="smsStatus")
+	@Column(name="sms_status")
 	private String smsStatus;
 
-	@Column(name="createdDate")
+	@Column(name="created_date")
 	private Date createdDate;
 
-	public int getAltKey() {
+	public long getAltKey() {
 		return altKey;
 	}
 
-	public void setAltKey(int altKey) {
+	public void setAltKey(long altKey) {
 		this.altKey = altKey;
 	}
 
@@ -82,7 +82,7 @@ public class SmsDetails {
 	public void setCreatedDate(Date createdDate) {
 		this.createdDate = createdDate;
 	}
-
+	
 	@Override
 	public String toString() {
 		return "SmsDetails [altKey=" + altKey + ", name=" + name + ", contactNumber=" + contactNumber + ", smsContact="

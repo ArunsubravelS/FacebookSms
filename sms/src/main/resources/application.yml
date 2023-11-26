@@ -1,0 +1,23 @@
+#spring :
+#
+#      
+# datasource :
+#      url : jdbc:mysql://localhost:3306/operational_db
+#      username : root 
+#      password : root
+#    
+# jpa:
+#  hibernate :
+#      ddl-auto : update 
+#      
+#  properties :
+#      hibernate :
+#        format_sql: true
+#        dialact : org.hibernate.dialect.MySQL8Dialect
+#        server :
+#              port:8081
+#        
+#                
+#  show-sql : true
+#  
+#          
